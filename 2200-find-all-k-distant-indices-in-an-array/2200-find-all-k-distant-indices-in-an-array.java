@@ -9,8 +9,8 @@ class Solution {
         
         List <Integer> res = new ArrayList <> ();
         
-        for(int i=0; i<nums.length; ++i)
-            for(int j=0; j<id.size(); ++j){
+        for(int i=0; i<nums.length; i++)
+            for(int j=0; j<id.size(); j++){
             
                 if(Math.abs(i - id.get(j)) <= k){
                     
