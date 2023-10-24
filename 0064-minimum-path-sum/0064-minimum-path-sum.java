@@ -1,31 +1,36 @@
 
 
 class Solution {
-    public int minPathSum(int[][] grid) {
-        int m = grid.length;
-        int n = grid[0].length;
-        
-        int[][] dp = new int[m][n];
-        
-        dp[0][0] = grid[0][0];
-        
-        // Initialize the first row and first column.
-        for (int i = 1; i < m; i++) {
-            dp[i][0] = dp[i - 1][0] + grid[i][0];
-        }
-        for (int j = 1; j < n; j++) {
-            dp[0][j] = dp[0][j - 1] + grid[0][j];
-        }
-        
-        // Fill in the rest of the dp array.
-        for (int i = 1; i < m; i++) {
-            for (int j = 1; j < n; j++) {
-                // Choose the minimum path sum from the top or left.
-                dp[i][j] = Math.min(dp[i - 1][j], dp[i][j - 1]) + grid[i][j];
+    public int minPathSum(int[][] matrix) {
+        int n = matrix.length;
+        int m = matrix[0].length;
+        int dp[][] = new int[n][m];
+
+        // Iterate through the matrix
+        for (int i = 0; i < n; i++) {
+            for (int j = 0; j < m; j++) {
+                if (i == 0 && j == 0)
+                    dp[i][j] = matrix[i][j]; // If we're at the top-left cell, the minimum sum is its value
+                else {
+                    int up = matrix[i][j];
+                    if (i > 0)
+                        up += dp[i - 1][j]; // Add the value from above if it's not out of bounds
+                    else
+                        up += (int) Math.pow(10, 9); // Add a large value if out of bounds in the up direction
+
+                    int left = matrix[i][j];
+                    if (j > 0)
+                        left += dp[i][j - 1]; // Add the value from the left if it's not out of bounds
+                    else
+                        left += (int) Math.pow(10, 9); // Add a large value if out of bounds in the left direction
+
+                    // Store the minimum of the two possible paths
+                    dp[i][j] = Math.min(up, left);
+                }
             }
         }
-        
-        // The value in the bottom-right cell represents the minimum path sum.
-        return dp[m - 1][n - 1];
+
+        // The final result is stored in the bottom-right cell of the DP matrix
+        return dp[n - 1][m - 1];
     }
 }
