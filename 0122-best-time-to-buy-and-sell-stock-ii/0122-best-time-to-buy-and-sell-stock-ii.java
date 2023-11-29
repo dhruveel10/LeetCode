@@ -1,7 +1,7 @@
 class Solution {
     public int maxProfit(int[] prices) {
         int n = prices.length;
-        int[][] dp = new int[n + 1][2];
+        int[][] dp = new int[n + 2][2];
 
         // Initialize the entire dp table with -1
         for (int[] row : dp) {
