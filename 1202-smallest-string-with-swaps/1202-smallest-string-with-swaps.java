@@ -1,36 +1,57 @@
-class UF {
-  public UF(int n) {
-    id = new int[n];
-    for (int i = 0; i < n; ++i)
-      id[i] = i;
-  }
-
-  public void union(int u, int v) {
-    id[find(u)] = find(v);
-  }
-
-  public int find(int u) {
-    return id[u] == u ? u : (id[u] = find(id[u]));
-  }
-
-  private int[] id;
-}
-
 class Solution {
-  public String smallestStringWithSwaps(String s, List<List<Integer>> pairs) {
-    StringBuilder ans = new StringBuilder();
-    UF uf = new UF(s.length());
-    Map<Integer, Queue<Character>> map = new HashMap<>();
-
-    for (List<Integer> pair : pairs)
-      uf.union(pair.get(0), pair.get(1));
-
-    for (int i = 0; i < s.length(); ++i)
-      map.computeIfAbsent(uf.find(i), k -> new PriorityQueue<>()).offer(s.charAt(i));
-
-    for (int i = 0; i < s.length(); ++i)
-      ans.append(map.get(uf.find(i)).poll());
-
-    return ans.toString();
-  }
+    public String smallestStringWithSwaps(String s, List<List<Integer>> pairs) {
+        // Initialize the adjacency list
+        List<List<Integer>> adj = new ArrayList<>();
+        
+        for (int i = 0; i < s.length(); i++) {
+            adj.add(new ArrayList<>());
+        }
+        
+        // Populate the adjacency list
+        for (List<Integer> pair : pairs) {
+            adj.get(pair.get(0)).add(pair.get(1));
+            adj.get(pair.get(1)).add(pair.get(0));
+        }
+        
+        boolean[] visited = new boolean[s.length()];
+        char[] result = new char[s.length()]; // To store the result string
+        
+        // Iterate over each character in the string
+        for (int i = 0; i < s.length(); i++) {
+            if (!visited[i]) {
+                // List to store the indices of the connected components
+                List<Integer> indices = new ArrayList<>();
+                // List to store the characters in the connected components
+                List<Character> characters = new ArrayList<>();
+                
+                // Perform DFS to find all connected nodes
+                dfs(i, adj, visited, s, indices, characters);
+                
+                // Sort the indices and characters
+                Collections.sort(indices);
+                Collections.sort(characters);
+                
+                // Place the sorted characters in their correct positions
+                for (int j = 0; j < indices.size(); j++) {
+                    result[indices.get(j)] = characters.get(j);
+                }
+            }
+        }
+        
+        // Convert the result array back to a string and return it
+        return new String(result);
+    }
+    
+    // DFS function to find all connected nodes and their corresponding characters
+    private void dfs(int i, List<List<Integer>> adj, boolean[] visited, String s, List<Integer> indices, List<Character> characters) {
+        visited[i] = true;
+        indices.add(i);
+        characters.add(s.charAt(i));
+        
+        for (int neighbor : adj.get(i)) {
+            if (!visited[neighbor]) {
+                dfs(neighbor, adj, visited, s, indices, characters);
+            }
+        }
+    }
 }
